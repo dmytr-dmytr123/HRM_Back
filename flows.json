@@ -522,5 +522,73 @@
         "x": 710,
         "y": 300,
         "wires": []
+    },
+    {
+        "id": "0d21da776aabfd6c",
+        "type": "http response",
+        "z": "35b07030a806d923",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 590,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "b91ca31b4b08f668",
+        "type": "mongodb out",
+        "z": "35b07030a806d923",
+        "mongodb": "3e75c009d00c328a",
+        "name": "Mongo Update",
+        "collection": "",
+        "payonly": false,
+        "upsert": false,
+        "multi": false,
+        "operation": "update",
+        "x": 600,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "70e2d6431d7f9ac0",
+        "type": "function",
+        "z": "35b07030a806d923",
+        "name": "updateJob",
+        "func": "msg.collection='jobs';\n\nmsg.query={\n    _id:objectid(msg.payload._id)\n};\n\ndelete msg.payload._id;\n\nmsg.payload={\n    $set:msg.payload\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "objectid",
+                "module": "objectid"
+            }
+        ],
+        "x": 350,
+        "y": 440,
+        "wires": [
+            [
+                "b91ca31b4b08f668",
+                "0d21da776aabfd6c"
+            ]
+        ]
+    },
+    {
+        "id": "442d3de32caa5634",
+        "type": "http in",
+        "z": "35b07030a806d923",
+        "name": "",
+        "url": "/updateJob",
+        "method": "put",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 80,
+        "y": 440,
+        "wires": [
+            [
+                "70e2d6431d7f9ac0"
+            ]
+        ]
     }
 ]
