@@ -1,0 +1,526 @@
+[
+    {
+        "id": "8c5ad608821ebe2b",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "35b07030a806d923",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "3e75c009d00c328a",
+        "type": "mongodb",
+        "hostname": "mongo-3837-ubos-hldmh-mongo-3837.ubos-hldmh",
+        "topology": "direct",
+        "connectOptions": "authSource=admin",
+        "port": "27017",
+        "db": "mongo-3837",
+        "name": ""
+    },
+    {
+        "id": "9e880eca6cfd7a07",
+        "type": "http in",
+        "z": "8c5ad608821ebe2b",
+        "name": "",
+        "url": "/createCompany",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 160,
+        "wires": [
+            [
+                "20c29e85d07cc308"
+            ]
+        ]
+    },
+    {
+        "id": "20c29e85d07cc308",
+        "type": "function",
+        "z": "8c5ad608821ebe2b",
+        "name": "createCompany",
+        "func": "msg.collection='companies';\n\nmsg.payload={\n    ...msg.payload,\n    deleted:false\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "objectid",
+                "module": "objectid"
+            }
+        ],
+        "x": 400,
+        "y": 160,
+        "wires": [
+            [
+                "f92495afcacb89f1",
+                "37ed45b0d9a6f0c6",
+                "ddee3df9326f1e35"
+            ]
+        ]
+    },
+    {
+        "id": "f92495afcacb89f1",
+        "type": "mongodb out",
+        "z": "8c5ad608821ebe2b",
+        "mongodb": "3e75c009d00c328a",
+        "name": "Mongo SAVE",
+        "collection": "companies",
+        "payonly": true,
+        "upsert": false,
+        "multi": false,
+        "operation": "insert",
+        "x": 650,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "37ed45b0d9a6f0c6",
+        "type": "http response",
+        "z": "8c5ad608821ebe2b",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 630,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "00dcb6dcb5f516d4",
+        "type": "http in",
+        "z": "8c5ad608821ebe2b",
+        "name": "",
+        "url": "/getCompany",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 340,
+        "wires": [
+            [
+                "4bda2a8411870b0c"
+            ]
+        ]
+    },
+    {
+        "id": "4bda2a8411870b0c",
+        "type": "function",
+        "z": "8c5ad608821ebe2b",
+        "name": "getCompany",
+        "func": "msg.collection = 'companies';\nmsg.payload={\n    deleted:false\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "objectid",
+                "module": "objectid"
+            }
+        ],
+        "x": 390,
+        "y": 340,
+        "wires": [
+            [
+                "028f62706164197f"
+            ]
+        ]
+    },
+    {
+        "id": "028f62706164197f",
+        "type": "mongodb in",
+        "z": "8c5ad608821ebe2b",
+        "mongodb": "3e75c009d00c328a",
+        "name": "Mongo FIND",
+        "collection": "companies",
+        "operation": "find",
+        "x": 570,
+        "y": 340,
+        "wires": [
+            [
+                "85ad85d89932883c",
+                "097ce8972cde1cc1"
+            ]
+        ]
+    },
+    {
+        "id": "85ad85d89932883c",
+        "type": "http response",
+        "z": "8c5ad608821ebe2b",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 750,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "cf5604712d70de7d",
+        "type": "http in",
+        "z": "8c5ad608821ebe2b",
+        "name": "",
+        "url": "/updateCompany",
+        "method": "put",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 440,
+        "wires": [
+            [
+                "ecca5072b765a464"
+            ]
+        ]
+    },
+    {
+        "id": "ecca5072b765a464",
+        "type": "function",
+        "z": "8c5ad608821ebe2b",
+        "name": "updateCopmany",
+        "func": "msg.collection='companies';\n\nmsg.query={\n    _id:objectid(msg.payload._id)\n};\n\ndelete msg.payload._id;\n\nmsg.payload={\n    $set:msg.payload\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "objectid",
+                "module": "objectid"
+            }
+        ],
+        "x": 410,
+        "y": 440,
+        "wires": [
+            [
+                "0def7ffb71fa3a68",
+                "72a3df6ffa95634f"
+            ]
+        ]
+    },
+    {
+        "id": "0def7ffb71fa3a68",
+        "type": "mongodb out",
+        "z": "8c5ad608821ebe2b",
+        "mongodb": "3e75c009d00c328a",
+        "name": "Mongo Update",
+        "collection": "",
+        "payonly": false,
+        "upsert": false,
+        "multi": false,
+        "operation": "update",
+        "x": 640,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "72a3df6ffa95634f",
+        "type": "http response",
+        "z": "8c5ad608821ebe2b",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 630,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "ddee3df9326f1e35",
+        "type": "debug",
+        "z": "8c5ad608821ebe2b",
+        "name": "createdebug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 590,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "097ce8972cde1cc1",
+        "type": "debug",
+        "z": "8c5ad608821ebe2b",
+        "name": "getdebug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "138bc9f6dfae7774",
+        "type": "http in",
+        "z": "8c5ad608821ebe2b",
+        "name": "",
+        "url": "/deleteCompany",
+        "method": "put",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 580,
+        "wires": [
+            [
+                "8f4fddd85ac6c206"
+            ]
+        ]
+    },
+    {
+        "id": "8f4fddd85ac6c206",
+        "type": "function",
+        "z": "8c5ad608821ebe2b",
+        "name": "deleteCompany",
+        "func": "msg.collection='companies';\nmsg.query = {\n    \"_id\": objectid(msg.payload._id)\n}\n\ndelete msg.payload._id\n\nmsg.payload = {\n    $set: { \"deleted\": true }\n}\n\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "objectid",
+                "module": "objectid"
+            }
+        ],
+        "x": 400,
+        "y": 580,
+        "wires": [
+            [
+                "398645ee162a7eec",
+                "511b8bfcd54d18d4",
+                "ceb8254f293450dd"
+            ]
+        ]
+    },
+    {
+        "id": "398645ee162a7eec",
+        "type": "mongodb out",
+        "z": "8c5ad608821ebe2b",
+        "mongodb": "3e75c009d00c328a",
+        "name": "Mongo Delete",
+        "collection": "",
+        "payonly": false,
+        "upsert": false,
+        "multi": false,
+        "operation": "update",
+        "x": 600,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "511b8bfcd54d18d4",
+        "type": "http response",
+        "z": "8c5ad608821ebe2b",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 570,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "ceb8254f293450dd",
+        "type": "debug",
+        "z": "8c5ad608821ebe2b",
+        "name": "delcompany",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 450,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "604ae2558635396d",
+        "type": "http in",
+        "z": "35b07030a806d923",
+        "name": "",
+        "url": "/createJob",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 80,
+        "y": 80,
+        "wires": [
+            [
+                "8458eec6daacf586"
+            ]
+        ]
+    },
+    {
+        "id": "8458eec6daacf586",
+        "type": "function",
+        "z": "35b07030a806d923",
+        "name": "createJob",
+        "func": "msg.collection='jobs';\n\nmsg.payload={\n    ...msg.payload,\n    deleted:false\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "objectid",
+                "module": "objectid"
+            }
+        ],
+        "x": 340,
+        "y": 80,
+        "wires": [
+            [
+                "8a84fba5b0bc7446",
+                "fbdcd820588ca43f",
+                "2af599ade4e1191e"
+            ]
+        ]
+    },
+    {
+        "id": "8a84fba5b0bc7446",
+        "type": "mongodb out",
+        "z": "35b07030a806d923",
+        "mongodb": "3e75c009d00c328a",
+        "name": "Mongo SAVE",
+        "collection": "jobs",
+        "payonly": true,
+        "upsert": false,
+        "multi": false,
+        "operation": "insert",
+        "x": 610,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "fbdcd820588ca43f",
+        "type": "http response",
+        "z": "35b07030a806d923",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 590,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "2af599ade4e1191e",
+        "type": "debug",
+        "z": "35b07030a806d923",
+        "name": "createdebug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 550,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "7aeab76713f4e907",
+        "type": "http in",
+        "z": "35b07030a806d923",
+        "name": "",
+        "url": "/getJobs",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 70,
+        "y": 300,
+        "wires": [
+            [
+                "e5259748146e1bc1"
+            ]
+        ]
+    },
+    {
+        "id": "e5259748146e1bc1",
+        "type": "function",
+        "z": "35b07030a806d923",
+        "name": "getCompany",
+        "func": "msg.collection = 'jobs';\nmsg.payload={\n    deleted:false\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "objectid",
+                "module": "objectid"
+            }
+        ],
+        "x": 350,
+        "y": 300,
+        "wires": [
+            [
+                "1a7c36b096b96099"
+            ]
+        ]
+    },
+    {
+        "id": "1a7c36b096b96099",
+        "type": "mongodb in",
+        "z": "35b07030a806d923",
+        "mongodb": "3e75c009d00c328a",
+        "name": "Mongo FIND",
+        "collection": "jobs",
+        "operation": "find",
+        "x": 530,
+        "y": 300,
+        "wires": [
+            [
+                "688bfaf22881e4cc",
+                "c58e2249321a96b4"
+            ]
+        ]
+    },
+    {
+        "id": "c58e2249321a96b4",
+        "type": "debug",
+        "z": "35b07030a806d923",
+        "name": "getdebug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "688bfaf22881e4cc",
+        "type": "http response",
+        "z": "35b07030a806d923",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 710,
+        "y": 300,
+        "wires": []
+    }
+]
