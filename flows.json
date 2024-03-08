@@ -373,7 +373,7 @@
         "type": "function",
         "z": "35b07030a806d923",
         "name": "createJob",
-        "func": "msg.collection='jobs';\n\nmsg.payload={\n    ...msg.payload,\n    deleted:false\n}\n\nreturn msg;",
+        "func": "msg.collection='jobs';\nmsg.payload={\n    ...msg.payload,\n    deleted:false,\n    company:objectid(msg.payload.company)\n}\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -399,13 +399,13 @@
         "type": "mongodb out",
         "z": "35b07030a806d923",
         "mongodb": "3e75c009d00c328a",
-        "name": "Mongo SAVE",
+        "name": "Mongo SAVEJOB",
         "collection": "jobs",
         "payonly": true,
         "upsert": false,
         "multi": false,
         "operation": "insert",
-        "x": 610,
+        "x": 630,
         "y": 80,
         "wires": []
     },
@@ -458,8 +458,8 @@
         "id": "e5259748146e1bc1",
         "type": "function",
         "z": "35b07030a806d923",
-        "name": "getCompany",
-        "func": "msg.collection = 'jobs';\nmsg.payload={\n    deleted:false\n}\nreturn msg;",
+        "name": "getJobs",
+        "func": "msg.collection = 'jobs';\nmsg.payload={\n    deleted:false,\n    Company:msg.payload.company\n}\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -470,7 +470,7 @@
                 "module": "objectid"
             }
         ],
-        "x": 350,
+        "x": 340,
         "y": 300,
         "wires": [
             [
@@ -483,10 +483,10 @@
         "type": "mongodb in",
         "z": "35b07030a806d923",
         "mongodb": "3e75c009d00c328a",
-        "name": "Mongo FIND",
+        "name": "Mongo FINDJOB",
         "collection": "jobs",
         "operation": "find",
-        "x": 530,
+        "x": 550,
         "y": 300,
         "wires": [
             [
@@ -539,13 +539,13 @@
         "type": "mongodb out",
         "z": "35b07030a806d923",
         "mongodb": "3e75c009d00c328a",
-        "name": "Mongo Update",
+        "name": "Mongo UpdateJob",
         "collection": "",
         "payonly": false,
         "upsert": false,
         "multi": false,
         "operation": "update",
-        "x": 600,
+        "x": 610,
         "y": 440,
         "wires": []
     },
@@ -554,7 +554,7 @@
         "type": "function",
         "z": "35b07030a806d923",
         "name": "updateJob",
-        "func": "msg.collection='jobs';\n\nmsg.query={\n    _id:objectid(msg.payload._id)\n};\n\ndelete msg.payload._id;\n\nmsg.payload={\n    $set:msg.payload\n}\nreturn msg;",
+        "func": "msg.collection='jobs';\n\nmsg.query={\n    _id:objectid(msg.payload._id)\n};\n\ndelete msg.payload._id;\n\nmsg.payload={\n    $set:{\n     ...msg.payload,\n    \"company\":objectid(msg.payload.company)\n    }\n}\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -590,5 +590,183 @@
                 "70e2d6431d7f9ac0"
             ]
         ]
+    },
+    {
+        "id": "86fff2f40b4e5763",
+        "type": "mongodb out",
+        "z": "35b07030a806d923",
+        "mongodb": "3e75c009d00c328a",
+        "name": "Mongo DeleteJob",
+        "collection": "",
+        "payonly": false,
+        "upsert": false,
+        "multi": false,
+        "operation": "update",
+        "x": 590,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "bff932c603a0e4cd",
+        "type": "function",
+        "z": "35b07030a806d923",
+        "name": "deleteJob",
+        "func": "msg.collection='jobs';\nmsg.query = {\n    \"_id\": objectid(msg.payload._id)\n}\n\ndelete msg.payload._id\n\nmsg.payload = {\n    $set: { \"deleted\": true }\n}\n\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "objectid",
+                "module": "objectid"
+            }
+        ],
+        "x": 320,
+        "y": 640,
+        "wires": [
+            [
+                "86fff2f40b4e5763",
+                "0196d97f0644341f",
+                "2e248d586cde2b0d"
+            ]
+        ]
+    },
+    {
+        "id": "a2bac46935cdb356",
+        "type": "http in",
+        "z": "35b07030a806d923",
+        "name": "",
+        "url": "/deleteJob",
+        "method": "put",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 80,
+        "y": 640,
+        "wires": [
+            [
+                "bff932c603a0e4cd"
+            ]
+        ]
+    },
+    {
+        "id": "0196d97f0644341f",
+        "type": "http response",
+        "z": "35b07030a806d923",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 530,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "2e248d586cde2b0d",
+        "type": "debug",
+        "z": "35b07030a806d923",
+        "name": "DELJOBS",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "2c7486fa3a593d2d",
+        "type": "http in",
+        "z": "35b07030a806d923",
+        "name": "",
+        "url": "/getCompanyForJob",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 800,
+        "wires": [
+            [
+                "fa22d9e3f53f42c5"
+            ]
+        ]
+    },
+    {
+        "id": "fa22d9e3f53f42c5",
+        "type": "function",
+        "z": "35b07030a806d923",
+        "name": "getCompanyForJob",
+        "func": "msg.collection = 'companies';\nmsg.payload = {\n    deleted: false\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "objectid",
+                "module": "objectid"
+            }
+        ],
+        "x": 380,
+        "y": 800,
+        "wires": [
+            [
+                "9f5ca8064fc7d7d9"
+            ]
+        ]
+    },
+    {
+        "id": "9f5ca8064fc7d7d9",
+        "type": "mongodb in",
+        "z": "35b07030a806d923",
+        "mongodb": "3e75c009d00c328a",
+        "name": "Mongo getComp",
+        "collection": "",
+        "operation": "find",
+        "x": 630,
+        "y": 800,
+        "wires": [
+            [
+                "5a720d08edb79afc"
+            ]
+        ]
+    },
+    {
+        "id": "5a720d08edb79afc",
+        "type": "function",
+        "z": "35b07030a806d923",
+        "name": "return",
+        "func": "msg.payload=msg.payload.map((e=>{\n    return{\n        label:e.name,\n        value:e._id\n    }\n}))\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "objectid",
+                "module": "objectid"
+            }
+        ],
+        "x": 830,
+        "y": 800,
+        "wires": [
+            [
+                "00809390fa1cf642"
+            ]
+        ]
+    },
+    {
+        "id": "00809390fa1cf642",
+        "type": "http response",
+        "z": "35b07030a806d923",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 990,
+        "y": 800,
+        "wires": []
     }
 ]
